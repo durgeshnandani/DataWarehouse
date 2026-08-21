@@ -9,7 +9,9 @@ create schema silver;
 Go
 create schema gold;
 Go
---CREATE THE 6 TABLES FROM THE SOURSE CRM AND ERP 
+
+--CREATE THE 6 TABLES FROM THE SOURCE CRM AND ERP 
+
 IF OBJECT_ID('bronze.crm_cust_info' , 'U') IS NOT NULL
  DROP TABLE bronze.crm_cust_info;
 Create table bronze.crm_cust_info(
