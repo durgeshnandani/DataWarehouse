@@ -83,3 +83,8 @@ BEGIN
 	END CATCH
 
 END
+
+--HOW TO RUN THE SCRIPT DAILY TO LOAD THE DATA
+
+EXEC bronze.load_bronze;
+
