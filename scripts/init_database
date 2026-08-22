@@ -1,1 +1,11 @@
+--create a database name as Data Warehouse and create the layer names as bronze , silver and gold
 
+use master;
+create database DataWarehouse;
+use DataWarehouse;
+create schema bronze;
+Go
+create schema silver;
+Go
+create schema gold;
+Go
