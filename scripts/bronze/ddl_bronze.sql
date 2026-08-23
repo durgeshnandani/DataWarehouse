@@ -48,7 +48,7 @@ Create table bronze.erp_LOC_A101(
   CID NVARCHAR(50),
   CNTRY NVARCHAR(50)
 );
-IF OBJECT_ID('bronze.PX_CAT_G1V2' , 'U') IS NOT NULL
+IF OBJECT_ID('bronze.erp_PX_CAT_G1V2' , 'U') IS NOT NULL
  DROP TABLE bronze.erp_PX_CAT_G1V2;
 Create table bronze.erp_PX_CAT_G1V2(
   ID NVARCHAR(50),
