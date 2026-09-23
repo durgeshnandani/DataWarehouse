@@ -157,3 +157,44 @@ case
   else sls_price
 end as sls_price from bronze.crm_sales_details
 
+-- lets clean the cust_AZ12 table
+-- check the data first where u will get that cid is not matching with cid of cust table it has extra 'NAS' in the starting
+--need to remove it so that in the case of joining the cid is same in both table , then with bdate column check if bdate is greater than today's date
+---it is bad data bdate can't be in future and then check for gender and normalize it with male,female,n/a (earlier there was 'F' ,'M' ,'Male' ,'Female' ,'NULL'
+--- and blank space normalize it
+
+select 
+ case 
+  when cid like 'NAS%' THEN substring(cid,4,len(cid))
+  else cid
+end as cid , 
+case 
+  when bdate>GETDATE() THEN NULL
+  ELSE bdate
+end as bdate , 
+case 
+ when UPPER(TRIM(gen)) in ('F' , 'FEMALE') THEN 'Female'
+ when UPPER(TRIM(gen)) in ('M' , 'MALE') THEN 'Male'
+ else 'n/a' 
+end as gen
+from bronze.erp_CUST_AZ12
+
+---data is clean now so load it in silver layer
+
+INSERT INTO silver.erp_CUST_AZ12(cid,bdate,gen)
+select 
+ case 
+  when cid like 'NAS%' THEN substring(cid,4,len(cid))
+  else cid
+end as cid , 
+case 
+  when bdate>GETDATE() THEN NULL
+  ELSE bdate
+end as bdate , 
+case 
+ when UPPER(TRIM(gen)) in ('F' , 'FEMALE') THEN 'Female'
+ when UPPER(TRIM(gen)) in ('M' , 'MALE') THEN 'Male'
+ else 'n/a' 
+end as gen
+from bronze.erp_CUST_AZ12
+
