@@ -124,7 +124,7 @@ end as sls_ship_dt,
      else cast(cast(sls_due_dt as varchar) as date) 
    end as sls_due_dt,
 case
-  when sls_sales IS NULL OR sls_sales <=0 then abs(sls_price)*sls_quantity
+  when sls_sales IS NULL OR sls_sales <=0 or sls_sales != sls_quantity * abs(sls_price) then abs(sls_price)*sls_quantity
   else sls_sales
 end as sls_sales, sls_quantity,
 case 
@@ -149,7 +149,7 @@ end as sls_ship_dt,
      else cast(cast(sls_due_dt as varchar) as date) 
    end as sls_due_dt,
 case
-  when sls_sales IS NULL OR sls_sales <=0 then abs(sls_price)*sls_quantity
+  when sls_sales IS NULL OR sls_sales <=0 or sls_sales != sls_quantity * abs(sls_price) then abs(sls_price)*sls_quantity
   else sls_sales
 end as sls_sales, sls_quantity,
 case 
