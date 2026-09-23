@@ -104,3 +104,56 @@ from bronze.crm_prd_info;
 
 --check the data
 select * from silver.crm_prd_info;
+
+--check for null value or duplicates for sls_ord_num and check that sls_prd_key do not contain extra space and sls_cust_id is not negative 
+-- for sls_order_dt is int convert it to varchar then to date same with sls_ship_dt and due_dt and checkthat order dt is less than ship or due date
+-- then check that sls_sales and quantity,price is not null zero or negative and sales=quantity*price
+-- change the schema of sales table for order_dt which is int change it to date
+
+select sls_ord_num,sls_prd_key,sls_cust_id,
+case 
+  when sls_order_dt is null or len(sls_order_dt) !=8 then null
+  else cast(cast(sls_order_dt as varchar) as date) 
+end as sls_order_dt,
+case 
+  when sls_ship_dt is null or len(sls_ship_dt)!=8 then null
+    else cast(cast(sls_ship_dt as varchar) as date) 
+end as sls_ship_dt,
+   case 
+     when sls_due_dt is null or len(sls_due_dt) !=8 then null
+     else cast(cast(sls_due_dt as varchar) as date) 
+   end as sls_due_dt,
+case
+  when sls_sales IS NULL OR sls_sales <=0 then abs(sls_price)*sls_quantity
+  else sls_sales
+end as sls_sales, sls_quantity,
+case 
+  when sls_price is null or sls_price <=0 then sls_sales/nullif(sls_quantity,0)
+  else sls_price
+end as sls_price from bronze.crm_sales_details
+
+
+--data is clean now insert in silver layer
+insert into silver.crm_sales_details(sls_ord_num,sls_prd_key,sls_cust_id,sls_order_dt,sls_ship_dt,sls_due_dt,sls_sales,sls_quantity,sls_price)
+select sls_ord_num,sls_prd_key,sls_cust_id,
+case 
+  when sls_order_dt is null or len(sls_order_dt) !=8 then null
+  else cast(cast(sls_order_dt as varchar) as date) 
+end as sls_order_dt,
+case 
+  when sls_ship_dt is null or len(sls_ship_dt)!=8 then null
+    else cast(cast(sls_ship_dt as varchar) as date) 
+end as sls_ship_dt,
+   case 
+     when sls_due_dt is null or len(sls_due_dt) !=8 then null
+     else cast(cast(sls_due_dt as varchar) as date) 
+   end as sls_due_dt,
+case
+  when sls_sales IS NULL OR sls_sales <=0 then abs(sls_price)*sls_quantity
+  else sls_sales
+end as sls_sales, sls_quantity,
+case 
+  when sls_price is null or sls_price <=0 then sls_sales/nullif(sls_quantity,0)
+  else sls_price
+end as sls_price from bronze.crm_sales_details
+
