@@ -198,3 +198,37 @@ case
 end as gen
 from bronze.erp_CUST_AZ12
 
+ 
+--- check for LOC_A101 there are 2 columns check for cid which is linked with prod_key of another table that do not have '-' so remove it
+---for country check the standarization as names as short form and blank space and null values
+
+select REPLACE(cid,'-', '') AS cid,
+case when TRIM(cntry) ='DE' then 'Germany'
+     when TRIM(cntry) in ('US','USA') then 'United States'
+     when TRIM(cntry) IS NULL OR TRIM(cntry) ='' then 'n/a'
+     else TRIM(cntry)
+end as cntry from bronze.erp_LOC_A101;
+
+---Load in silver layer
+INSERT INTO Silver.erp_LOC_A101(cid,cntry)
+select REPLACE(cid,'-', '') AS cid,
+case when TRIM(cntry) ='DE' then 'Germany'
+     when TRIM(cntry) in ('US','USA') then 'United States'
+     when TRIM(cntry) IS NULL OR TRIM(cntry) ='' then 'n/a'
+     else TRIM(cntry)
+end as cntry from bronze.erp_LOC_A101;
+
+----CHECK DATA IN SILVER LAYER
+select * from silver.erp_LOC_A101;
+
+--- CHECK FOR TABLE PX_CAT_G1V2 , as checked the data quality is good and we need to just load in silver laye
+-- I checked if c_id is same as cust_key from customer table so I need to remove somethings, then check for blank space for any string in all 3 columns
+---then checked for standarization as no short form null or blank space , so everything looks fine
+
+INSERT INTO silver.erp_PX_CAT_G1V2(id,cat,subcat,maintenance)
+select id,cat,subcat,maintenance from bronze.erp_PX_CAT_G1V2;
+
+--check data in silver layer
+
+select * from silver.erp_PX_CAT_G1V2;
+
